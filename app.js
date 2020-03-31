@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 
-// Chargement du fichier index.html affiché au client
+// Chargement of file index.html displayed for the client
 var server = http.createServer(function(req, res) {
     fs.readFile('./index.html', 'utf-8', function(error, content) {
         res.writeHead(200, {"Content-Type": "text/html"});
@@ -9,21 +9,23 @@ var server = http.createServer(function(req, res) {
     });
 });
 
-// Chargement de socket.io
+// Chargement of socket.io
 var io = require('socket.io').listen(server);
+io.origins('*:*')
 
 io.sockets.on('connection', function (socket, pseudo) {   
-    // Dès qu'on nous donne un pseudo, on le stocke en variable de session
-    socket.on('petit_nouveau', function(pseudo) {
+    //when we get the username, we save it in a session var
+    socket.on('newbie', function(pseudo) {
         socket.pseudo = pseudo;
         socket.emit('joined', pseudo + ' joined the chat !')
         socket.broadcast.emit('joined', pseudo + ' joined the chat !')
     });
 
-    // Dès qu'on reçoit un "message" (clic sur le bouton), on le note dans la console
+    // When we receive a "message", (click on the button), we write it in the terminal
     socket.on('test', function (message) {
-        // On récupère le pseudo de celui qui a cliqué dans les variables de session
-        console.log(socket.pseudo + ' me parle ! Il me dit : ' + message);
+
+        // We get the username of those who clicked in the session vars
+        console.log(socket.pseudo + ' is talking to me ! He says : ' + message);
     }); 
     socket.on('message', function (message) {
         socket.emit('message', {pseudo: socket.pseudo, message: message});

@@ -6,11 +6,11 @@
     </head>
  
     <body>
-        <h1>Communication avec socket.io !</h1>
+        <h1>socket.io communication !</h1>
 
 
-        <form action="/" method="post" id="formulaire_chat">
-            <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+        <form action="/" method="post" id="form_chat">
+            <input type="text" name="message" id="message" placeholder="Your message..." size="50" autofocus />
             <input type="submit" id="envoi_message" value="Envoyer" />
         </form>
 
@@ -24,28 +24,28 @@
         <script>
             var socket = io.connect('http://localhost:8080');
 
-            // On demande le pseudo au visiteur...
-            var pseudo = prompt('Quel est votre pseudo ?');
-            // Et on l'envoie avec le signal "petit_nouveau" (pour le différencier de "message")
-            socket.emit('petit_nouveau', pseudo);
+            // We ask for the the client username 
+            var pseudo = prompt('What is your username ?');
+            // and we send it with the "newbie" tag 
+            socket.emit('newbie', pseudo);
             document.title = pseudo + ' - ' + document.title
 
-            // On affiche une boîte de dialogue quand le serveur nous envoie un "message"
+            //we display a dialog box when the server send us a "message"
             socket.on('test', function(message) {
-                alert('Le serveur a un message pour vous : ' + message);
+                alert('Server has a message for you : ' + message);
             })
             socket.on('joined', function(message) {
                 $('#zone_chat').prepend(message + '</p>');
             })
             socket.on('message', function(data) {
-                insereMessage(data.message, data.pseudo)
+                insertMessage(data.message, data.pseudo)
             })
-            function insereMessage(message, pseudo) {
+            function insertMessage(message, pseudo) {
                 $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
             }
 
-            // Lorsqu'on clique sur le bouton, on envoie un "message" au serveur
-            $('#formulaire_chat').submit(function () {
+            //when we click on the button, we send a "message" to the server
+            $('#form_chat').submit(function () {
                 let message = document.getElementById("message").value;
                 socket.emit('message', message);
                 return false;
